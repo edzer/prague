@@ -8,6 +8,7 @@ output: html_document
 ## Large datasets
 
 When is a dataset large?
+
 - Who of you works with (analyzes) datasets that do not fit on your local hard drive?
 - How large are they?
 - Does anyone of you do analysis that is distributed over more than one machine?
@@ -65,6 +66,7 @@ What you cannot do:
 - see the source code of the GEE
 - ensure reproducibility (but this is always relative!)
 - have a guarantee that you get the capacity you would like to have (no SLA)
+- fit arbitrary (R, python) models and use them to predict, in the cloud
 
 Alternatives:
 
