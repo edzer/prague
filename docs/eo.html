@@ -140,6 +140,7 @@ $(document).ready(function () {
 <li>PostGIS? What if it is larger than local drivers?</li>
 <li>Spark?</li>
 <li>GeoMesa?</li>
+<li>What if we have long, dense time series for a set of sensor stations? Would you store the station geometry with <em>each observation</em>?</li>
 </ul>
 </div>
 <div id="large-raster-datasets" class="section level2">
@@ -148,6 +149,7 @@ $(document).ready(function () {
 <li>global digital elevation models</li>
 <li>CMIP 4, 5, <a href="https://www.wcrp-climate.org/wgcm-cmip/wgcm-cmip6">6</a> (<a href="https://www.geosci-model-dev.net/9/1937/2016/gmd-9-1937-2016.pdf">20-40 Pb</a>)</li>
 <li>remote sensing: Landsat, sentinel, …</li>
+<li>the “set of layers” (<code>RasterStack</code>) model does not really work fo this</li>
 <li>how can we analyse these datasets without downloading them?</li>
 </ul>
 </div>
@@ -156,15 +158,17 @@ $(document).ready(function () {
 <ul>
 <li>How does a petabyte <a href="https://twitter.com/VITO_RS_/status/976779510350794752">look like</a>?</li>
 <li>Network capacity: although we think that networks are fast, at some stage (and pretty soon), shipping hard drives is faster than down/uploading.</li>
-<li><em>Handling</em> imagery data involves
+<li><em>Handling</em> imagery data may involve
 <ul>
-<li>storing tiles (scenes), indexing them</li>
-<li>mozaic them? (replacing the original files?)</li>
-<li>harmonize tiles from different sensors (e.g., MODIS, L8, S2)</li>
-<li>run atmospheric correction models</li>
+<li>storing tiles (scenes),</li>
+<li>indexing them,</li>
+<li>mozaicing them? (replacing the original files?)</li>
+<li>harmonizing tiles from different sensors (e.g., MODIS, L8, S2)</li>
+<li>running atmospheric correction models?</li>
+<li>cloud removal? etc.</li>
 </ul></li>
-<li>these actions are pretty much the same for everyone</li>
-<li>put (keep) data in files, or put them in a database?</li>
+<li>these actions are pretty much <em>the same for everyone</em>, however you would like to know how this works, and control details of it</li>
+<li>put (or keep) data in files, or put them in a database?</li>
 <li>if database, how to backup? leave original files in place?</li>
 </ul>
 </div>
@@ -192,9 +196,23 @@ $(document).ready(function () {
 <li>ensure reproducibility (but this is always relative!)</li>
 <li>have a guarantee that you get the capacity you would like to have (no SLA)</li>
 </ul>
+<p>Alternatives:</p>
+<ul>
+<li>TEPs (thematic exploration platforms): by theme, independently</li>
+<li>The upcoming Copernicus Data and Information Access Services (<a href="http://copernicus.eu/news/upcoming-copernicus-data-and-information-access-services-dias">DIAS</a>)</li>
+</ul>
 </div>
-<div id="openeo" class="section level2">
-<h2>OpenEO</h2>
+<div id="cloud-challenges" class="section level2">
+<h2>Cloud challenges</h2>
+<ul>
+<li>Object storage (e.g. S3, GCS, document stores/object storage) vs. dedicated formats (HDF5, netcdf, sqlite): both compete for the same smartness, expect essential clashes (Cloud-optimized GeoTIFF, NetCDF seems to move now)</li>
+<li>How to distribute your computation over nodes (who has done this?); should users do this?</li>
+<li>How to make sure your data are “close” enough to your compute nodes (same data center? SDD of your node or the object storage?)</li>
+<li>these are challenges that the average (majority) of data scientists would like to <em>not</em> have to deal with</li>
+</ul>
+</div>
+<div id="httpopeneo.org" class="section level2">
+<h2><a href="http://OpenEO.org" class="uri">http://OpenEO.org</a></h2>
 <p>“openEO develops an open API to connect R, python and javascript clients to big Earth observation cloud back-ends in a simple and unified way.”</p>
 <p>What is an API? A contract, a language</p>
 <p>In some sense, this is similar to</p>
@@ -207,6 +225,7 @@ $(document).ready(function () {
 <li><a href="http://openeo.org/">web site</a>, <a href="https://github.com/open-eo/">github site</a></li>
 <li><a href="https://open-eo.github.io/openeo-api/arch/index.html">architecture</a></li>
 </ul>
+<p>openEO does <em>NOT</em> prescribe how back-ends should store their data, or organize their computations.</p>
 </div>
 <div id="openeo-challenges" class="section level2">
 <h2>openEO challenges</h2>
@@ -219,6 +238,7 @@ $(document).ready(function () {
 <li>build a <em>process graph</em> which is essentially a nested expression or function call;</li>
 <li>evaluate it lazily (i.e., only when asked for: show pixels on the screen, provide download link)</li>
 <li>ability to combine different openEO back-ends (show results, use one as input to the other) (<a href="http://pebesma.staff.ifgi.de/openeo_poster.pdf">poster</a>)</li>
+<li>irrespective whether the data is stored as a data cube, provide a <em>data cube view</em> to the user</li>
 </ul>
 <p>Use:</p>
 <ul>
@@ -227,14 +247,10 @@ $(document).ready(function () {
 <li>cost management</li>
 <li>cost estimation</li>
 </ul>
-</div>
-<div id="cloud-challenges" class="section level2">
-<h2>Cloud challenges</h2>
+<p>Discover/describe data:</p>
 <ul>
-<li>Object storage (e.g. S3, GCS, document stores) vs. dedicated formats (HDF5, netcdf, sqlite): both compete for the same smartness, and essential clashes (Cloud-optimized GeoTIFF, NetCDF seems to move now)</li>
-<li>How to distribute your computation over nodes (who has done this?)</li>
-<li>How to make sure your data are “close” enough to your compute nodes (same data center? SDD of your node?)</li>
-<li>these are challenges that the average (majority) of data scientists would like to <em>not</em> have to deal with</li>
+<li>how are <em>image collections</em> described (e.g. GEE: S2, L8), how are their bands described?</li>
+<li>how can results be published, so they can be reused downstream?</li>
 </ul>
 </div>
 

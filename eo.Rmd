@@ -1,0 +1,122 @@
+---
+title: "Scalable raster data analysis in the cloud with R"
+author: "Edzer Pebesma"
+date: "August 23, 2018"
+output: html_document
+---
+
+## Large datasets
+
+When is a dataset large?
+- Who of you works with (analyzes) datasets that do not fit on your local hard drive?
+- How large are they?
+- Does anyone of you do analysis that is distributed over more than one machine?
+- Who of you thinks this will happen in the next five years?
+
+## Large Feature datasets
+
+- e.g., openstreetmaps, the raw data
+- PostGIS? What if it is larger than local drivers?
+- Spark?
+- GeoMesa?
+- What if we have long, dense time series for a set of sensor stations? Would you store the station geometry with _each observation_?
+
+## Large Raster datasets
+
+- global digital elevation models
+- CMIP 4, 5, [6](https://www.wcrp-climate.org/wgcm-cmip/wgcm-cmip6) ([20-40 Pb](https://www.geosci-model-dev.net/9/1937/2016/gmd-9-1937-2016.pdf))
+- remote sensing: Landsat, sentinel, ...
+- the "set of layers" (`RasterStack`) model does not really work fo this
+- how can we analyse these datasets without downloading them?
+
+## Current limitations
+
+- How does a petabyte [look like](https://twitter.com/VITO_RS_/status/976779510350794752)?
+- Network capacity: although we think that networks are fast, at some stage (and pretty soon), shipping hard drives is faster than down/uploading.
+- _Handling_ imagery data may involve
+    - storing tiles (scenes), 
+    - indexing them,
+    - mozaicing them? (replacing the original files?)
+    - harmonizing tiles from different sensors (e.g., MODIS, L8, S2)
+    - running atmospheric correction models?
+    - cloud removal? etc.
+- these actions are pretty much _the same for everyone_, however you would like to know how this works, and control details of it
+- put (or keep) data in files, or put them in a database?
+- if database, how to backup? leave original files in place?
+    
+## Google Earth Engine
+
+It is good that:
+
+- a graduate student can work with massive EO imagery after 1 day of training
+- we can apply a lot of methods, from computing indexes, time series analysis, to machine learning
+- we can work with the data _as if it were_ a data cube:
+    - compute on the grid cells _you see_, rather than the native imagery resolution
+    - pick a temporal resolution
+    - regridding, downsampling, spatial and temporal, happens on the fly
+
+Not trivial for
+
+- working with datasets not in GEE (but integrates with google bigtable)
+
+What you cannot do:
+
+- run arbitrary, custom code on the imagery (python, R, javascript); restricted to GEE api
+- see the source code of the GEE
+- ensure reproducibility (but this is always relative!)
+- have a guarantee that you get the capacity you would like to have (no SLA)
+
+Alternatives:
+
+- TEPs (thematic exploration platforms): by theme, independently
+-  The upcoming Copernicus Data and Information Access Services ([DIAS](http://copernicus.eu/news/upcoming-copernicus-data-and-information-access-services-dias))
+
+## Cloud challenges
+
+- Object storage (e.g. S3, GCS, document stores/object storage) vs. dedicated formats (HDF5, netcdf, sqlite): both compete for the same smartness, expect essential clashes (Cloud-optimized GeoTIFF, NetCDF seems to move now)
+- How to distribute your computation over nodes (who has done this?); should users do this?
+- How to make sure your data are "close" enough to your compute nodes (same data center? SDD of your node or the object storage?)
+- these are challenges that the average (majority) of data scientists would like to _not_ have to deal with
+
+## http://OpenEO.org
+
+"openEO develops an open API to connect R, python and javascript clients to big Earth observation cloud back-ends in a simple and unified way."
+
+What is an API? A contract, a language
+
+In some sense, this is similar to 
+
+- providing packages that provide APIs for spatial data in R, or 
+- what dplyr/dbplyr does with scaling up computing on tables
+
+Large challenges of openEO: allow user-defined functions (UDFs) in R, python or JavaScript to be carried out by the backend.
+
+- [web site](http://openeo.org/), [github site](https://github.com/open-eo/)
+- [architecture](https://open-eo.github.io/openeo-api/arch/index.html)
+
+openEO does _NOT_ prescribe how back-ends should store their data, or organize their computations.
+
+## openEO challenges
+
+Approach
+
+- develop an API to access working systems, rather than try to compose one from existing standards (WPS, WCS, WCPS, CSW, OAuth2, ...)
+
+Analyse: 
+
+- build a _process graph_ which is essentially a nested expression or function call; 
+- evaluate it lazily (i.e., only when asked for: show pixels on the screen, provide download link)
+- ability to combine different openEO back-ends (show results, use one as input to the other) ([poster](http://pebesma.staff.ifgi.de/openeo_poster.pdf))
+- irrespective whether the data is stored as a data cube, provide a _data cube view_ to the user
+
+Use:
+
+- user management
+- where can users put data, and retrieve data from
+- cost management
+- cost estimation
+
+Discover/describe data:
+
+- how are _image collections_ described (e.g. GEE: S2, L8), how are their bands described?
+- how can results be published, so they can be reused downstream? 
