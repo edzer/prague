@@ -148,6 +148,7 @@ $(document).ready(function () {
 <li>global digital elevation models</li>
 <li>CMIP 4, 5, <a href="https://www.wcrp-climate.org/wgcm-cmip/wgcm-cmip6">6</a> (<a href="https://www.geosci-model-dev.net/9/1937/2016/gmd-9-1937-2016.pdf">20-40 Pb</a>)</li>
 <li>remote sensing: Landsat, sentinel, …</li>
+<li>how can we analyse these datasets without downloading them?</li>
 </ul>
 </div>
 <div id="current-limitations" class="section level2">
@@ -169,11 +170,11 @@ $(document).ready(function () {
 </div>
 <div id="google-earth-engine" class="section level2">
 <h2>Google Earth Engine</h2>
-<p>What is good:</p>
+<p>It is good that:</p>
 <ul>
 <li>a graduate student can work with massive EO imagery after 1 day of training</li>
-<li>apply a lot of methods, from computing indexes, time series analysis, to machine learning</li>
-<li>work with the data <em>as if it were</em> a data cube:
+<li>we can apply a lot of methods, from computing indexes, time series analysis, to machine learning</li>
+<li>we can work with the data <em>as if it were</em> a data cube:
 <ul>
 <li>compute on the grid cells <em>you see</em>, rather than the native imagery resolution</li>
 <li>pick a temporal resolution</li>
@@ -187,7 +188,7 @@ $(document).ready(function () {
 <p>What you cannot do:</p>
 <ul>
 <li>run arbitrary, custom code on the imagery (python, R, javascript); restricted to GEE api</li>
-<li>see the source code of the GEE (for good reasons!)</li>
+<li>see the source code of the GEE</li>
 <li>ensure reproducibility (but this is always relative!)</li>
 <li>have a guarantee that you get the capacity you would like to have (no SLA)</li>
 </ul>
@@ -202,6 +203,30 @@ $(document).ready(function () {
 <li>what dplyr/dbplyr does with scaling up computing on tables</li>
 </ul>
 <p>Large challenges of openEO: allow user-defined functions (UDFs) in R, python or JavaScript to be carried out by the backend.</p>
+<ul>
+<li><a href="http://openeo.org/">web site</a>, <a href="https://github.com/open-eo/">github site</a></li>
+<li><a href="https://open-eo.github.io/openeo-api/arch/index.html">architecture</a></li>
+</ul>
+</div>
+<div id="openeo-challenges" class="section level2">
+<h2>openEO challenges</h2>
+<p>Approach</p>
+<ul>
+<li>develop an API to access working systems, rather than try to compose one from existing standards (WPS, WCS, WCPS, CSW, OAuth2, …)</li>
+</ul>
+<p>Analyse:</p>
+<ul>
+<li>build a <em>process graph</em> which is essentially a nested expression or function call;</li>
+<li>evaluate it lazily (i.e., only when asked for: show pixels on the screen, provide download link)</li>
+<li>ability to combine different openEO back-ends (show results, use one as input to the other) (<a href="http://pebesma.staff.ifgi.de/openeo_poster.pdf">poster</a>)</li>
+</ul>
+<p>Use:</p>
+<ul>
+<li>user management</li>
+<li>where can users put data, and retrieve data from</li>
+<li>cost management</li>
+<li>cost estimation</li>
+</ul>
 </div>
 <div id="cloud-challenges" class="section level2">
 <h2>Cloud challenges</h2>
